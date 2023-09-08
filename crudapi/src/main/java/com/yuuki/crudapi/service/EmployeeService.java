@@ -1,7 +1,7 @@
 package com.yuuki.crudapi.service;
 
+import com.yuuki.crudapi.dto.EmployeeDto;
 import com.yuuki.crudapi.entity.Employee;
-import com.yuuki.crudapi.form.EmployeeCreateForm;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public interface EmployeeService {
 
     List<Employee> findByDepartment(String department);
 
-    int createEmployee(EmployeeCreateForm employeeCreateForm);
+    int createEmployee(EmployeeDto employeeDto);
 }
 
 

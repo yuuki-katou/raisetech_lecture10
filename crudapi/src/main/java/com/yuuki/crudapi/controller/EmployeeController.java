@@ -1,10 +1,12 @@
 package com.yuuki.crudapi.controller;
 
 import com.yuuki.crudapi.ResourceNotFoundException;
+import com.yuuki.crudapi.dto.EmployeeDto;
 import com.yuuki.crudapi.entity.Employee;
 import com.yuuki.crudapi.form.EmployeeCreateForm;
 import com.yuuki.crudapi.service.EmployeeService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,11 +48,21 @@ public class EmployeeController {
     //従業員の情報を登録するメソッド
     @PostMapping("/employees")
     public ResponseEntity<String> addEmployee(@RequestBody EmployeeCreateForm employeeCreateForm) {
-        int newEmployeeId = employeeService.createEmployee(employeeCreateForm);
+
+        //ModelMapperインスタンスを作成し、EmployeeCreateFormをEmployeeDtoに変換
+        ModelMapper modelMapper = new ModelMapper();
+        EmployeeDto employeeDto = modelMapper.map(employeeCreateForm, EmployeeDto.class);
+
+        //登録処理の呼び出し、戻り値のId情報を格納
+        int newEmployeeId = employeeService.createEmployee(employeeDto);
+
+        //URIの生成
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(newEmployeeId)
                 .toUri();
+
+        //メッセージとURIをレスポンスとして返す
         return ResponseEntity.created(location).body("a new employee is created!!");
     }
 
