@@ -1,9 +1,10 @@
 package com.yuuki.crudapi.service;
 
 import com.yuuki.crudapi.ResourceNotFoundException;
+import com.yuuki.crudapi.dto.EmployeeDto;
 import com.yuuki.crudapi.entity.Employee;
-import com.yuuki.crudapi.form.EmployeeCreateForm;
 import com.yuuki.crudapi.mapper.EmployeeMapper;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,11 +44,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     //従業員の情報を登録するメソッド
     @Override
-    public int createEmployee(EmployeeCreateForm employeeCreateForm) {
-        employeeMapper.create(employeeCreateForm);
-        return employeeCreateForm.getId();
+    public int createEmployee(EmployeeDto employeeDto) {
+        //ModelMapperインスタンスを作成し、EmployeeDtoをEmployeeに変換
+        ModelMapper modelMapper = new ModelMapper();
+        Employee employee = modelMapper.map(employeeDto, Employee.class);
+
+        // 変換したEmployeeエンティティをデータベースに保存
+        employeeMapper.create(employee);
+
+        // 保存したEmployeeのIDを返す。
+        return employee.getId();
     }
-
-
 }
 

@@ -1,11 +1,8 @@
-package com.yuuki.crudapi.form;
-
-import com.yuuki.crudapi.dto.EmployeeDto;
-import org.modelmapper.ModelMapper;
+package com.yuuki.crudapi.dto;
 
 import java.time.LocalDate;
 
-public class EmployeeCreateForm {
+public class EmployeeDto {
     private int id;
     private String name;
     private LocalDate birthdate;
@@ -14,7 +11,7 @@ public class EmployeeCreateForm {
     private String email;
     private String phone;
 
-    public EmployeeCreateForm(int id, String name, LocalDate birthdate, String department, String role, String email, String phone) {
+    public EmployeeDto(int id, String name, LocalDate birthdate, String department, String role, String email, String phone) {
         this.id = id;
         this.name = name;
         this.birthdate = birthdate;
@@ -22,6 +19,9 @@ public class EmployeeCreateForm {
         this.role = role;
         this.email = email;
         this.phone = phone;
+    }
+
+    public EmployeeDto() {
     }
 
     public int getId() {
@@ -56,9 +56,27 @@ public class EmployeeCreateForm {
         this.id = id;
     }
 
-    public EmployeeDto toDto() {
-        ModelMapper modelMapper = new ModelMapper();
-        return modelMapper.map(this, EmployeeDto.class);
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setBirthdate(LocalDate birthdate) {
+        this.birthdate = birthdate;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }
-
