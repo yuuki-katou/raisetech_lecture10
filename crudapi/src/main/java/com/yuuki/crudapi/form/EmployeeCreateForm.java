@@ -1,5 +1,8 @@
 package com.yuuki.crudapi.form;
 
+import com.yuuki.crudapi.dto.EmployeeDto;
+import org.modelmapper.ModelMapper;
+
 import java.time.LocalDate;
 
 public class EmployeeCreateForm {
@@ -51,6 +54,11 @@ public class EmployeeCreateForm {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public EmployeeDto toDto() {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(this, EmployeeDto.class);
     }
 }
 

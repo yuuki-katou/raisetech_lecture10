@@ -6,7 +6,6 @@ import com.yuuki.crudapi.entity.Employee;
 import com.yuuki.crudapi.form.EmployeeCreateForm;
 import com.yuuki.crudapi.service.EmployeeService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,9 +48,8 @@ public class EmployeeController {
     @PostMapping("/employees")
     public ResponseEntity<String> addEmployee(@RequestBody EmployeeCreateForm employeeCreateForm) {
 
-        //ModelMapperインスタンスを作成し、EmployeeCreateFormをEmployeeDtoに変換
-        ModelMapper modelMapper = new ModelMapper();
-        EmployeeDto employeeDto = modelMapper.map(employeeCreateForm, EmployeeDto.class);
+        //EmployeeCreateFormをEmployeeDtoに変換
+        EmployeeDto employeeDto = employeeCreateForm.toDto();
 
         //登録処理の呼び出し、戻り値のId情報を格納
         int newEmployeeId = employeeService.createEmployee(employeeDto);
