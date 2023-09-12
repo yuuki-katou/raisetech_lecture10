@@ -4,6 +4,7 @@ import com.yuuki.crudapi.ResourceNotFoundException;
 import com.yuuki.crudapi.dto.EmployeeDto;
 import com.yuuki.crudapi.entity.Employee;
 import com.yuuki.crudapi.form.EmployeeCreateForm;
+import com.yuuki.crudapi.form.EmployeeUpdateForm;
 import com.yuuki.crudapi.service.EmployeeService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -19,14 +20,13 @@ import java.util.Map;
 
 @RestController
 public class EmployeeController {
-
     private EmployeeService employeeService;
 
     public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
     }
 
-    // 全ての従業員を取得，または特定の部署に所属する従業員を取得するメソッド
+    // 全ての従業員を取得，または特定の部署に所属する従業員を取得する
     @GetMapping("/employees")
     public List<EmployeeResponse> getEmployees(@RequestParam(value = "department", required = false) String department) {
         List<Employee> employees;
@@ -38,13 +38,13 @@ public class EmployeeController {
         return employees.stream().map(EmployeeResponse::new).toList();
     }
 
-    // 特定のIDの従業員を取得するメソッド
+    // 特定のIDの従業員を取得する
     @GetMapping("/employees/{id}")
     public Employee getEmployeeById(@PathVariable("id") int id) throws Exception {
         return employeeService.findById(id);
     }
 
-    //従業員の情報を登録するメソッド
+    //新しい従業員を追加する
     @PostMapping("/employees")
     public ResponseEntity<String> addEmployee(@RequestBody EmployeeCreateForm employeeCreateForm) {
 
@@ -63,6 +63,24 @@ public class EmployeeController {
         //メッセージとURIをレスポンスとして返す
         return ResponseEntity.created(location).body("a new employee is created!!");
     }
+
+    //IDによって既存の従業員の情報を更新する
+    @PatchMapping("/employees/{id}")
+    public ResponseEntity<String> updateEmployee(@PathVariable("id") int id, @RequestBody EmployeeUpdateForm employeeUpdateForm) {
+        employeeUpdateForm.setId(id);
+        EmployeeDto employeeDto = employeeUpdateForm.toDto();
+        employeeService.updateEmployee(employeeDto);
+
+        return ResponseEntity.ok("Employee with ID has been updated");
+    }
+
+    // IDによって従業員を削除する
+    @DeleteMapping("/employees/{id}")
+    public ResponseEntity<String> deleteEmployeeById(@PathVariable("id") int id) {
+        employeeService.deleteEmployee(id);
+        return ResponseEntity.ok("Employee with ID has been deleted");
+    }
+
 
     // ResourceNotFoundException がスローされた場合のハンドラ
     @ExceptionHandler(value = ResourceNotFoundException.class)

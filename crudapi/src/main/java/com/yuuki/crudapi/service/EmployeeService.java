@@ -13,6 +13,10 @@ public interface EmployeeService {
     List<Employee> findByDepartment(String department);
 
     int createEmployee(EmployeeDto employeeDto);
+
+    void updateEmployee(EmployeeDto employeeDto);
+
+    void deleteEmployee(int id);
 }
 
 

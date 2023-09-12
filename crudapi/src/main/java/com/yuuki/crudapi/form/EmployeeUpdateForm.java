@@ -1,11 +1,11 @@
-package com.yuuki.crudapi.dto;
+package com.yuuki.crudapi.form;
 
-import com.yuuki.crudapi.entity.Employee;
+import com.yuuki.crudapi.dto.EmployeeDto;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
 
-public class EmployeeDto {
+public class EmployeeUpdateForm {
     private int id;
     private String name;
     private LocalDate birthdate;
@@ -14,7 +14,7 @@ public class EmployeeDto {
     private String email;
     private String phone;
 
-    public EmployeeDto(int id, String name, LocalDate birthdate, String department, String role, String email, String phone) {
+    public EmployeeUpdateForm(int id, String name, LocalDate birthdate, String department, String role, String email, String phone) {
         this.id = id;
         this.name = name;
         this.birthdate = birthdate;
@@ -22,9 +22,6 @@ public class EmployeeDto {
         this.role = role;
         this.email = email;
         this.phone = phone;
-    }
-
-    public EmployeeDto() {
     }
 
     public int getId() {
@@ -83,8 +80,8 @@ public class EmployeeDto {
         this.phone = phone;
     }
 
-    public Employee toEmployee() {
+    public EmployeeDto toDto() {
         ModelMapper modelMapper = new ModelMapper();
-        return modelMapper.map(this, Employee.class);
+        return modelMapper.map(this, EmployeeDto.class);
     }
 }
