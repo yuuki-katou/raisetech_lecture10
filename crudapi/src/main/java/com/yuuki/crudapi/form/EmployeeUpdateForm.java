@@ -95,8 +95,10 @@ public class EmployeeUpdateForm {
         this.phone = phone;
     }
 
-    public EmployeeDto toDto() {
+    public EmployeeDto toDto(int id) {
         ModelMapper modelMapper = new ModelMapper();
-        return modelMapper.map(this, EmployeeDto.class);
+        EmployeeDto employeeDto = modelMapper.map(this, EmployeeDto.class);
+        employeeDto.setId(id);
+        return employeeDto;
     }
 }

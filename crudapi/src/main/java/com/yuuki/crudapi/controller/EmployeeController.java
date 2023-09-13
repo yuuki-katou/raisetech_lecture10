@@ -83,8 +83,7 @@ public class EmployeeController {
             @PathVariable("id") int id,
             @RequestBody @Valid EmployeeUpdateForm employeeUpdateForm) {
 
-        EmployeeDto employeeDto = employeeUpdateForm.toDto();
-        employeeDto.setId(id);
+        EmployeeDto employeeDto = employeeUpdateForm.toDto(id);
         employeeService.updateEmployee(employeeDto);
 
         return ResponseEntity.ok(Map.of("message", "Employee with ID has been updated"));
