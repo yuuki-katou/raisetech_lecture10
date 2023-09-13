@@ -7,13 +7,26 @@ import com.yuuki.crudapi.form.EmployeeCreateForm;
 import com.yuuki.crudapi.form.EmployeeUpdateForm;
 import com.yuuki.crudapi.service.EmployeeService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +59,7 @@ public class EmployeeController {
 
     //新しい従業員を追加する
     @PostMapping("/employees")
-    public ResponseEntity<String> addEmployee(@RequestBody EmployeeCreateForm employeeCreateForm) {
+    public ResponseEntity<Map<String, String>> addEmployee(@RequestBody EmployeeCreateForm employeeCreateForm) {
 
         //EmployeeCreateFormをEmployeeDtoに変換
         EmployeeDto employeeDto = employeeCreateForm.toDto();
@@ -61,24 +74,27 @@ public class EmployeeController {
                 .toUri();
 
         //メッセージとURIをレスポンスとして返す
-        return ResponseEntity.created(location).body("a new employee is created!!");
+        return ResponseEntity.created(location).body(Map.of("message", "A new employee is created!"));
     }
 
     //IDによって既存の従業員の情報を更新する
     @PatchMapping("/employees/{id}")
-    public ResponseEntity<String> updateEmployee(@PathVariable("id") int id, @RequestBody EmployeeUpdateForm employeeUpdateForm) {
-        employeeUpdateForm.setId(id);
+    public ResponseEntity<Map<String, String>> updateEmployee(
+            @PathVariable("id") int id,
+            @RequestBody @Valid EmployeeUpdateForm employeeUpdateForm) {
+
         EmployeeDto employeeDto = employeeUpdateForm.toDto();
+        employeeDto.setId(id);
         employeeService.updateEmployee(employeeDto);
 
-        return ResponseEntity.ok("Employee with ID has been updated");
+        return ResponseEntity.ok(Map.of("message", "Employee with ID has been updated"));
     }
 
     // IDによって従業員を削除する
     @DeleteMapping("/employees/{id}")
-    public ResponseEntity<String> deleteEmployeeById(@PathVariable("id") int id) {
+    public ResponseEntity<Map<String, String>> deleteEmployeeById(@PathVariable("id") int id) {
         employeeService.deleteEmployee(id);
-        return ResponseEntity.ok("Employee with ID has been deleted");
+        return ResponseEntity.ok(Map.of("message", "Employee with ID has been deleted"));
     }
 
 
@@ -94,4 +110,31 @@ public class EmployeeController {
                 "path", request.getRequestURI());
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
+
+    //バリデーションエラーが発生した際の例外ハンドラー
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleValidationExceptions(
+            MethodArgumentNotValidException ex, HttpServletRequest request) {
+
+        // エラーメッセージとフィールド名をマップに保存
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+
+        // 応答ボディを作成
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", ZonedDateTime.now().toString());
+        body.put("status", String.valueOf(HttpStatus.BAD_REQUEST.value()));
+        body.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
+        body.put("message", "Validation failed");
+        body.put("details", errors);
+        body.put("path", request.getRequestURI());
+
+        // 応答ボディとHTTPステータスを使用して、ResponseEntityを返す
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
 }
+
