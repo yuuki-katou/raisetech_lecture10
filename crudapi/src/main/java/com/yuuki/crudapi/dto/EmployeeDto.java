@@ -1,5 +1,8 @@
 package com.yuuki.crudapi.dto;
 
+import com.yuuki.crudapi.entity.Employee;
+import org.modelmapper.ModelMapper;
+
 import java.time.LocalDate;
 
 public class EmployeeDto {
@@ -78,5 +81,10 @@ public class EmployeeDto {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Employee toEmployee() {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(this, Employee.class);
     }
 }
