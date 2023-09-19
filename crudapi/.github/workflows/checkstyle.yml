@@ -1,14 +1,9 @@
-name: Checkstyle
+name: Java CI
 
-on:
-  pull_request:
-
-permissions:
-  contents: read
+on: pull_request
 
 jobs:
-  checkstyle:
-
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,13 +13,9 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Run check style
-        uses: nikitasavinov/checkstyle-action@master
-        if: always()
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: 'github-pr-check'
-          tool_name: 'reviewdog'
-          checkstyle_config: 'config/checkstyle/checkstyle.xml'
-          workdir: 'src/main'
-          level: error
+      - name: docker container build
+        run: docker compose up -d
+      - name: gradle build
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build
