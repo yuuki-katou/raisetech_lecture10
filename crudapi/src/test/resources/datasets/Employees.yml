@@ -1,0 +1,15 @@
+employees:
+  - id: 1
+    name: "Taro Yamada"
+    birthdate: "1990-01-01"
+    department: "Sales"
+    role: "Manager"
+    email: "taro.yamada@example.com"
+    phone: "012-3456-7890"
+  - id: 2
+    name: "Hanako Tanaka"
+    birthdate: "1995-02-02"
+    department: "Sales"
+    role: "Staff"
+    email: "hanako.tanaka@example.com"
+    phone: "023-4567-8901"

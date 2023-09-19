@@ -87,4 +87,13 @@ public class EmployeeDto {
         ModelMapper modelMapper = new ModelMapper();
         return modelMapper.map(this, Employee.class);
     }
+
+    public void mergeEmployeeData(Employee currentData) {
+        if (this.getName() == null) this.setName(currentData.getName());
+        if (this.getBirthdate() == null) this.setBirthdate(currentData.getBirthdate());
+        if (this.getDepartment() == null) this.setDepartment(currentData.getDepartment());
+        if (this.getRole() == null) this.setRole(currentData.getRole());
+        if (this.getEmail() == null) this.setEmail(currentData.getEmail());
+        if (this.getPhone() == null) this.setPhone(currentData.getPhone());
+    }
 }

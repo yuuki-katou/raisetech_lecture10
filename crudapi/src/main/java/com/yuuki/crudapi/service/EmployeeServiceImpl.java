@@ -59,7 +59,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     // 更新前に従業員が存在するか確認し、存在しない場合はResourceNotFoundExceptionを投げる
     @Override
     public void updateEmployee(EmployeeDto employeeDto) {
-        employeeMapper.findById(employeeDto.getId()).orElseThrow(() -> new ResourceNotFoundException("resource not found"));
+        Employee currentData = employeeMapper.findById(employeeDto.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("resource not found"));
+        employeeDto.mergeEmployeeData(currentData);
+
         Employee employee = employeeDto.toEmployee();
         employeeMapper.updateEmployee(employee);
     }

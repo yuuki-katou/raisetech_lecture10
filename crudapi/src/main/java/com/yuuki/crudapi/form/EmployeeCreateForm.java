@@ -6,7 +6,7 @@ import org.modelmapper.ModelMapper;
 import java.time.LocalDate;
 
 public class EmployeeCreateForm {
-    private int id;
+
     private String name;
     private LocalDate birthdate;
     private String department;
@@ -14,8 +14,7 @@ public class EmployeeCreateForm {
     private String email;
     private String phone;
 
-    public EmployeeCreateForm(int id, String name, LocalDate birthdate, String department, String role, String email, String phone) {
-        this.id = id;
+    public EmployeeCreateForm(String name, LocalDate birthdate, String department, String role, String email, String phone) {
         this.name = name;
         this.birthdate = birthdate;
         this.department = department;
@@ -24,9 +23,6 @@ public class EmployeeCreateForm {
         this.phone = phone;
     }
 
-    public int getId() {
-        return id;
-    }
 
     public String getName() {
         return name;
@@ -51,10 +47,7 @@ public class EmployeeCreateForm {
     public String getPhone() {
         return phone;
     }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+    
 
     public EmployeeDto toDto() {
         ModelMapper modelMapper = new ModelMapper();
