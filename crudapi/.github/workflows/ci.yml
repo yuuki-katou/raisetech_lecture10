@@ -1,68 +1,49 @@
-name: CI
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-
+name: dramaProject-CI
+on: [ pull_request ]
 permissions:
+  contents: read
   checks: write
-
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Run Test and Send Report
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Run Docker
+        run: docker compose up -d
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'temurin'
-          cache: 'gradle'
+          distribution: 'adopt'
 
-      - name: Docker run
-        run: docker compose up -d
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
-      - name: Test with Gradle
-        run: ./gradlew test
-        if: always()
+      - name: Conduct Tests
+        run: ./gradlew test --info
 
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v3
         if: always()
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
-          job_name: 'Test Report'
 
-      - name: Run check style
+      - name: Run Checkstyle
         uses: nikitasavinov/checkstyle-action@master
         if: always()
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: 'github-pr-check'
-          tool_name: 'reviewdog-checkstyle'
-          level: info
+          tool_name: 'reviewdog'
           checkstyle_config: 'config/checkstyle/checkstyle.xml'
           workdir: 'src/main'
+          level: warning
 
-      - name: Upload coverage to Codecov
+      - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-
-      - name: Run SpotBugs
-        run: ./gradlew spotbugsMain
-        if: always()
-
-      - name: Upload SpotBugs Report
-        uses: actions/upload-artifact@v1
-        if: always()
-        with:
-          name: spotbugs-result
-          path: build/reports/spotbugs/main.html
-          
-
